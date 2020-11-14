@@ -1,43 +1,31 @@
 var vidzDecription = document.querySelector('#video-desc');
 var comSubmit = document.querySelector('#search-form');
-var key2 = 'AIzaSyADg2hq0YHi7riYfTy2q2OkDxxxKZru5jY'
+var spanKey = '105dc371-ca01-41da-9f77-edb2596e6683'
+var engkey = '887ceb4b-27f8-48dd-b024-eaa31ca87885'
 
-function blogzPost (blogz) {
-    var blogzUrl = `https://www.googleapis.com/blogger/v3/blogs/662244493697771155/posts?key=${key2}`
-    
-    fetch(blogzUrl)
+function dictPull (comInput) {
+    var dictUrl = `https://www.dictionaryapi.com/api/v3/references/spanish/json/${comInput}?key=105dc371-ca01-41da-9f77-edb2596e6683`
+    fetch(dictUrl)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data);
-
-            // if (!data.items.length) {
-            //     console.log('No Youtube Videos Found');
-            // } else {
-            //     console.log(vidzDecription)
-            //     vidzDecription.textContent = 'YOOOOOOOOOOOOOOOOOO';
-            //     // for (let i = 0; i < data.items.length; i++) {
-            //     //    console.log('Hello Blogz')
-            //     // }
-            // }
+            showComm(data)
         })
-        // .catch(function (error) {
-        //     console.error(error);
-        // });
+        .catch(function (error) {
+            console.error(error);
+        });
 };
-
 
 function handleSearchFormSubmit(e) {
     e.preventDefault();
   
-    var comInput = document.querySelector('#video-comment-box').value;
-    console.log(comInput)
+    var comInput = document.querySelector('#translation-input').value;
     if (!comInput) {
       console.error('Post cannot be blank');
       return;
     }
-    blogzPost();
+    dictPull(comInput);
 }
 
 comSubmit.addEventListener('submit', handleSearchFormSubmit);
@@ -46,16 +34,13 @@ comSubmit.addEventListener('submit', handleSearchFormSubmit);
 
 var description = document.querySelector("#video-desc");
 var title = document.querySelector("#video-title");
-var uploader = document.querySelector("#video-uploader");
 
 function getParams() {
     // Get the Video ID out of the URL and convert it to an array
     var address = document.location.search.split('=');
-    console.log(address)
   
     // Get the vid ID from the array
     var videoID = address[1];
-    console.log(videoID);
 
     // if the Video ID is not empty or null, carry on
     if(videoID !== null || videoID !== "") { 
@@ -63,7 +48,6 @@ function getParams() {
     } else {
         // change Description text to error message if ID's missing or invalid
         description.textContent = "Looks like you got an error, go back to the homepage.";
-        title.textContent = "Invalid Video"; 
     }
 };
 
@@ -73,15 +57,24 @@ function showVids (str) {
     videoDisplay.setAttribute("id", str);
 
     // the Youtube embed with Video ID inserted
-    videoDisplay.innerHTML = `<iframe width="100%" height="400" src="https://www.youtube.com/embed/${str}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    videoDisplay.innerHTML = `<iframe width="100%" height="500" src="https://www.youtube.com/embed/${str}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
 
     // Puts this div with Iframe video embed inside the VIDEO-HERE element in HTML. Works if Video here's Div, P, Span, or Video
     document.querySelector("#video-here").append(videoDisplay)
 };
 
-getParams()
 
-// Testing textContent changes
-description.textContent = "change description text";
-title.textContent = "Test Title write";
-uploader.textContent = "Fake name for Uploader test";
+function showComm (dictObj) {
+    console.log(dictObj)
+    let dictEl = document.querySelector('#trans-div')
+
+    bodyDictEl = document.createElement('p');
+    bodyDictEl.textContent = dictObj[0].shortdef[0];
+
+    console.log(bodyDictEl)
+    dictEl.append(bodyDictEl)
+};
+
+getParams();
+
+
